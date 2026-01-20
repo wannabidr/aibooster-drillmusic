@@ -1,11 +1,11 @@
-#DJ Recommender (Raw Audio Only) — 문서화 (Markdown)
+# DJ Recommender (Raw Audio Only) — 문서화 (Markdown)
 
 목표: “현재 곡(outro)”을 기반으로 다음 곡(intro) 을 자동 추천하는 연속 추천 베이스라인
 핵심: CLAP 임베딩 + DJ 관점의 제약(BPM/Key/저역충돌) + 흥(추진력/드럼성/에너지) + 다양성(반복 방지)
 
 ⸻
 
-##1) Logic Flow
+## 1) Logic Flow
 
 flowchart TD
   A[build: 오디오 폴더 스캔] --> B[load_audio: soundfile -> 실패 시 librosa]
@@ -40,9 +40,9 @@ Recommend 단계
 
 ⸻
 
-2) Logic Cons / Adv
+## 2) Logic Cons / Adv
 
-✅ Advantages (장점)
+Advantages (장점)
 
 DJ 친화적인 “실전 제약”이 있음
 	•	**BPM 호환(±tol + half/double time)**로 실제 믹스 가능성↑
@@ -78,7 +78,7 @@ Key 추정은 장르/사운드 디자인에 따라 흔들릴 수 있음
 
 ⸻
 
-3) Future Works
+## 3) Future Works
 
 1) 전환(transition) 품질을 직접 모델링
 	•	outro→intro 크로스페이드 시뮬레이션 후
@@ -104,7 +104,7 @@ Key 추정은 장르/사운드 디자인에 따라 흔들릴 수 있음
 
 ⸻
 
-4) How to Run / Use
+## 4) How to Run / Use
 
 설치
 
@@ -157,7 +157,7 @@ sr.add_played(recs[0]["track_id"])
 
 ⸻
 
-5) SDD (Software Design Document)
+## 5) SDD (Software Design Document)
 
 5.1 목적 (Purpose)
 	•	Raw audio만으로 DJ 관점의 “다음 곡 자동 추천(연속 추천)”을 수행한다.
