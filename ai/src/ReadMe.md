@@ -1,11 +1,11 @@
-DJ Recommender (Raw Audio Only) — 문서화 (Markdown)
+#DJ Recommender (Raw Audio Only) — 문서화 (Markdown)
 
 목표: “현재 곡(outro)”을 기반으로 다음 곡(intro) 을 자동 추천하는 연속 추천 베이스라인
 핵심: CLAP 임베딩 + DJ 관점의 제약(BPM/Key/저역충돌) + 흥(추진력/드럼성/에너지) + 다양성(반복 방지)
 
 ⸻
 
-1) Logic Flow
+##1) Logic Flow
 
 flowchart TD
   A[build: 오디오 폴더 스캔] --> B[load_audio: soundfile -> 실패 시 librosa]
