@@ -907,9 +907,100 @@ def make_argparser() -> argparse.ArgumentParser:
     return p
 
 
+def _cmd_serve(args) -> None:
+    """
+    Serve mode: Load index once, then listen for JSON requests on stdin.
+    Respond with JSON on stdout.
+    """
+    print(f"[SERVE] Loading index from {args.index_dir}...", file=sys.stderr, flush=True)
+    sr = SessionRecommender(
+        index_dir=args.index_dir,
+        candidate_k=args.candidate_k,
+        use_key=not args.no_key,
+        min_tonal_clarity=args.min_tonal_clarity,
+    )
+    print(f"[SERVE] Loaded index with {len(sr.meta.tracks)} tracks.", file=sys.stderr, flush=True)
+    print("[SERVE] Ready. Listening for JSON requests on stdin...", file=sys.stderr, flush=True)
+
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            request = json.loads(line)
+            request_id = request.get("request_id", "unknown")
+            req_type = request.get("type", "")
+
+            if req_type == "recommend":
+                current = request.get("current")
+                goal = request.get("goal", "maintain")
+                top_k = request.get("top_k", args.top_k)
+
+                if not current:
+                    response = {
+                        "request_id": request_id,
+                        "error": "Missing 'current' field (track path)",
+                        "recommendations": []
+                    }
+                else:
+                    # Get recommendations
+                    recs = sr.next(current_path=current, goal=goal, top_k=top_k)
+                    
+                    # Format response
+                    response = {
+                        "request_id": request_id,
+                        "recommendations": [
+                            {
+                                "track_id": r["track_id"],
+                                "path": r["path"],
+                                "title": r.get("title"),
+                                "artist": r.get("artist"),
+                                "score": float(r["score"]),
+                                "bpm": float(r["bpm"]) if r.get("bpm") else None,
+                                "key": r.get("key")
+                            }
+                            for r in recs
+                        ]
+                    }
+            else:
+                response = {
+                    "request_id": request_id,
+                    "error": f"Unknown request type: {req_type}",
+                    "recommendations": []
+                }
+
+            # Send response
+            print(json.dumps(response), flush=True)
+
+        except Exception as e:
+            error_response = {
+                "request_id": request.get("request_id", "unknown") if isinstance(request, dict) else "unknown",
+                "error": f"{type(e).__name__}: {str(e)}",
+                "recommendations": []
+            }
+            print(json.dumps(error_response), flush=True)
+            if os.environ.get("DJREC_DEBUG", "").strip() == "1":
+                traceback.print_exc(file=sys.stderr)
+
+
 def main() -> None:
     try:
         parser = make_argparser()
+        
+        # Add serve subcommand
+        subparsers = parser._subparsers._group_actions[0].choices
+        serve = subparsers['serve'] = subparsers['build']._parser_class(
+            prog='main.py serve',
+            description='Run in server mode for IPC communication'
+        )
+        serve.add_argument("--index_dir", required=True, help="Path to index directory")
+        serve.add_argument("--top_k", type=int, default=3, help="Default top-K recommendations")
+        serve.add_argument("--candidate_k", type=int, default=200, help="Initial ANN candidate size")
+        serve.add_argument("--no_key", action="store_true", help="Disable key constraint")
+        serve.add_argument("--min_tonal_clarity", type=float, default=0.08, help="Min key clarity")
+        serve.set_defaults(func=_cmd_serve)
+        
         args = parser.parse_args()
         args.func(args)
     except KeyboardInterrupt:

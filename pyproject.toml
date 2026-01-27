@@ -1,0 +1,15 @@
+[project]
+name = "drillmusic"
+version = "0.1.0"
+description = "AI DJ System - DrillMusic"
+requires-python = ">=3.11"
+dependencies = [
+    "faiss-cpu>=1.7.4; platform_system != \"Darwin\" or platform_machine != \"arm64\"",
+    "librosa>=0.10",
+    "numpy>=1.23",
+    "scipy>=1.10",
+    "soundfile>=0.12",
+    "torch>=2.1",
+    "tqdm>=4.66",
+    "transformers>=4.40",
+]

@@ -1,4 +1,4 @@
-import chokidar from 'chokidar';
+import chokidar, { type FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { BrowserWindow } from 'electron';
 
@@ -7,7 +7,7 @@ import { BrowserWindow } from 'electron';
 // For now, we'll simulate watching a dummy log file.
 
 export class LogWatcher {
-  private watcher: chokidar.FSWatcher | null = null;
+  private watcher: FSWatcher | null = null;
   private mainWindow: BrowserWindow;
 
   constructor(mainWindow: BrowserWindow) {
@@ -24,7 +24,7 @@ export class LogWatcher {
       usePolling: true, // Often necessary for log files
     });
 
-    this.watcher.on('change', (path) => {
+    this.watcher.on('change', (path: string) => {
       this.handleFileChange(path);
     });
 
