@@ -1,0 +1,23 @@
+[package]
+name = "ai-dj-dsp"
+version = "0.1.0"
+edition = "2021"
+description = "DSP audio engine for AI DJ Assist"
+
+[lib]
+name = "ai_dj_dsp"
+path = "src/lib.rs"
+
+[dependencies]
+hound = "3.5"
+midir = "0.10"
+cpal = "0.15"
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+serde_json = "1"
+
+[[bench]]
+name = "dsp_bench"
+harness = false

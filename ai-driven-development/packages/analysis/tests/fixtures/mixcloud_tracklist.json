@@ -1,0 +1,34 @@
+{
+  "name": "Friday Night Techno Session",
+  "url": "/DJAlpha/friday-night-techno/",
+  "user": {"username": "DJAlpha", "name": "DJ Alpha"},
+  "tags": [{"name": "Techno"}, {"name": "Deep House"}],
+  "created_time": "2025-01-15T20:00:00Z",
+  "audio_length": 3600,
+  "sections": [
+    {
+      "track": {
+        "name": "Techno Track",
+        "artist": {"name": "DJ Alpha"}
+      },
+      "start_time": 0,
+      "section_type": "track"
+    },
+    {
+      "track": {
+        "name": "Deep House Vibes",
+        "artist": {"name": "DJ Beta"}
+      },
+      "start_time": 360,
+      "section_type": "track"
+    },
+    {
+      "track": {
+        "name": "Minimal Beat",
+        "artist": {"name": "DJ Gamma"}
+      },
+      "start_time": 780,
+      "section_type": "track"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<NML VERSION="19">
+  <HEAD COMPANY="www.native-instruments.com" PROGRAM="Traktor Pro 3"/>
+  <COLLECTION ENTRIES="2">
+    <ENTRY TITLE="Techno Track" ARTIST="DJ Alpha">
+      <LOCATION DIR="/:Users/:dj/:Music/:" FILE="techno_track.mp3" VOLUME="Macintosh HD" VOLUMEID="abc123"/>
+      <INFO GENRE="Techno" KEY="Am" PLAYTIME="360" RANKING="255" IMPORT_DATE="2025/01/15" LAST_PLAYED="2025/03/10"/>
+      <TEMPO BPM="128.000000" BPM_QUALITY="100.000000"/>
+      <MUSICAL_KEY VALUE="0"/>
+    </ENTRY>
+    <ENTRY TITLE="Deep House" ARTIST="DJ Delta">
+      <LOCATION DIR="/:Users/:dj/:Music/:" FILE="deep_house.wav" VOLUME="Macintosh HD" VOLUMEID="abc123"/>
+      <INFO GENRE="Deep House" KEY="Fm" PLAYTIME="480" RANKING="200" IMPORT_DATE="2025/02/10" LAST_PLAYED="2025/03/10"/>
+      <TEMPO BPM="122.000000" BPM_QUALITY="95.000000"/>
+      <MUSICAL_KEY VALUE="7"/>
+    </ENTRY>
+  </COLLECTION>
+  <SETS>
+    <ENTRY TITLE="Live Set 2025-03-10">
+      <TRACKS>
+        <ENTRY>
+          <PRIMARYKEY TYPE="TRACK" KEY="Macintosh HD/:Users/:dj/:Music/:techno_track.mp3"/>
+        </ENTRY>
+        <ENTRY>
+          <PRIMARYKEY TYPE="TRACK" KEY="Macintosh HD/:Users/:dj/:Music/:deep_house.wav"/>
+        </ENTRY>
+      </TRACKS>
+    </ENTRY>
+  </SETS>
+  <PLAYLISTS>
+    <NODE TYPE="FOLDER" NAME="$ROOT">
+      <SUBNODES COUNT="1">
+        <NODE TYPE="PLAYLIST" NAME="Main Set">
+          <PLAYLIST ENTRIES="2" TYPE="LIST" UUID="abc-123">
+            <ENTRY>
+              <PRIMARYKEY TYPE="TRACK" KEY="Macintosh HD/:Users/:dj/:Music/:techno_track.mp3"/>
+            </ENTRY>
+            <ENTRY>
+              <PRIMARYKEY TYPE="TRACK" KEY="Macintosh HD/:Users/:dj/:Music/:deep_house.wav"/>
+            </ENTRY>
+          </PLAYLIST>
+        </NODE>
+      </SUBNODES>
+    </NODE>
+  </PLAYLISTS>
+</NML>

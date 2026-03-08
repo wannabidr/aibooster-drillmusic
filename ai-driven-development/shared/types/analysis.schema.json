@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analysis.schema.json",
+  "title": "AnalysisResult",
+  "description": "Audio analysis result for a track",
+  "type": "object",
+  "properties": {
+    "trackId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "bpm": {
+      "type": "number",
+      "minimum": 60,
+      "maximum": 200
+    },
+    "key": {
+      "type": "string"
+    },
+    "camelotPosition": {
+      "type": "string",
+      "pattern": "^[1-9]|1[0-2][AB]$"
+    },
+    "energyProfile": {
+      "type": "object",
+      "properties": {
+        "overall": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "rmsValues": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "spectralCentroid": {
+          "type": "number"
+        },
+        "trajectory": {
+          "type": "string",
+          "enum": ["build", "maintain", "drop"]
+        }
+      },
+      "required": ["overall"]
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "fileHash": {
+      "type": "string"
+    },
+    "analyzedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["trackId", "bpm", "key", "energyProfile"]
+}

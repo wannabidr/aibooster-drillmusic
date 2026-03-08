@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recommendation.schema.json",
+  "title": "Recommendation",
+  "description": "A track recommendation with scoring breakdown",
+  "type": "object",
+  "properties": {
+    "trackId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "breakdown": {
+      "type": "object",
+      "properties": {
+        "bpmScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "keyScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "energyScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "genreScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "historyScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": ["bpmScore", "keyScore", "energyScore", "genreScore", "historyScore"]
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "required": ["trackId", "score", "breakdown"]
+}

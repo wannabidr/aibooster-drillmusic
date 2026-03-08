@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+target/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+.venv/
+venv/
+*.egg
+.eggs/
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+
+# Rust
+target/
+
+# Tauri
+apps/desktop/src-tauri/target/
+
+# Test
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary
+~$*

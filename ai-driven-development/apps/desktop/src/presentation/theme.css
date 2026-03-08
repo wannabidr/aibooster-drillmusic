@@ -1,0 +1,197 @@
+:root {
+  /* Background layers (darkest to lightest) */
+  --bg-base: #0a0a0f;
+  --bg-surface: #12121a;
+  --bg-elevated: #1a1a26;
+  --bg-overlay: #222233;
+  --bg-hover: #2a2a3d;
+  --bg-active: #333350;
+
+  /* Text */
+  --text-primary: #e8e8f0;
+  --text-secondary: #9999b3;
+  --text-muted: #8888a0;
+  --text-inverse: #0a0a0f;
+
+  /* Accent colors */
+  --accent-primary: #6c5ce7;
+  --accent-primary-hover: #7c6cf7;
+  --accent-secondary: #00cec9;
+  --accent-warm: #fd79a8;
+  --accent-energy: #fdcb6e;
+
+  /* Camelot wheel colors */
+  --camelot-compatible: #00b894;
+  --camelot-adjacent: #fdcb6e;
+  --camelot-clash: #e17055;
+
+  /* Energy graph */
+  --energy-low: #636e72;
+  --energy-mid: #00cec9;
+  --energy-high: #e17055;
+  --energy-peak: #fd79a8;
+
+  /* Borders */
+  --border-subtle: #1e1e30;
+  --border-default: #2d2d44;
+  --border-strong: #3d3d5c;
+
+  /* Status */
+  --status-success: #00b894;
+  --status-warning: #fdcb6e;
+  --status-error: #e17055;
+  --status-info: #74b9ff;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography */
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  user-select: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* High-contrast mode overrides (applied via ThemeProvider data attribute) */
+[data-high-contrast="true"] {
+  --bg-base: #000000;
+  --bg-surface: #0a0a12;
+  --bg-elevated: #141420;
+  --bg-overlay: #1c1c2e;
+  --bg-hover: #24243a;
+  --bg-active: #2e2e4a;
+  --text-primary: #ffffff;
+  --text-secondary: #c0c0d8;
+  --text-muted: #8888a8;
+  --text-inverse: #000000;
+  --accent-primary: #8b7bf7;
+  --accent-primary-hover: #9b8bff;
+  --accent-secondary: #20efe9;
+  --accent-warm: #ff90b8;
+  --accent-energy: #ffe080;
+  --camelot-compatible: #20d8a4;
+  --camelot-adjacent: #ffe080;
+  --camelot-clash: #ff7860;
+  --energy-low: #8090a0;
+  --energy-mid: #20efe9;
+  --energy-high: #ff7860;
+  --energy-peak: #ff90b8;
+  --border-subtle: #2a2a48;
+  --border-default: #3a3a5c;
+  --border-strong: #505078;
+  --status-success: #20d8a4;
+  --status-warning: #ffe080;
+  --status-error: #ff7860;
+  --status-info: #90c8ff;
+}
+
+/* Performance mode: reduce visual noise */
+[data-performance-mode="true"] {
+  --transition-fast: 0ms;
+  --transition-normal: 0ms;
+  --transition-slow: 0ms;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
+
+/* Glanceable typography utilities */
+.glanceable-bpm {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--accent-energy);
+  line-height: 1;
+}
+
+.glanceable-key {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--camelot-compatible);
+  line-height: 1;
+}
+
+/* Focus indicators for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(110, 87, 224, 0.3);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

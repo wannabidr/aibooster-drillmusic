@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DJ_PLAYLISTS Version="1.0.0">
+  <PRODUCT Name="rekordbox" Version="6.0.0" Company="AlphaTheta"/>
+  <COLLECTION Entries="3">
+    <TRACK TrackID="1" Name="Techno Track" Artist="DJ Alpha" Album="Night Sessions"
+           Genre="Techno" Kind="MP3 File" Size="8500000" TotalTime="360"
+           AverageBpm="128.00" Tonality="Am" Rating="5"
+           Location="file://localhost/Users/dj/Music/techno_track.mp3"
+           DateAdded="2025-01-15"/>
+    <TRACK TrackID="2" Name="House Groove" Artist="DJ Beta" Album="Club Cuts"
+           Genre="House" Kind="WAV File" Size="42000000" TotalTime="420"
+           AverageBpm="124.50" Tonality="Cm" Rating="4"
+           Location="file://localhost/Users/dj/Music/house_groove.wav"
+           DateAdded="2025-02-20"/>
+    <TRACK TrackID="3" Name="Drum &amp; Bass Hit" Artist="DJ Gamma" Album=""
+           Genre="Drum and Bass" Kind="AIFF File" Size="55000000" TotalTime="300"
+           AverageBpm="174.00" Tonality="F" Rating="3"
+           Location="file://localhost/Users/dj/Music/dnb_hit.aiff"
+           DateAdded="2025-03-01"/>
+  </COLLECTION>
+  <PLAYLISTS>
+    <NODE Type="0" Name="root" Count="2">
+      <NODE Type="1" Name="Friday Set" KeyType="0" Entries="2">
+        <TRACK Key="1"/>
+        <TRACK Key="2"/>
+      </NODE>
+      <NODE Type="1" Name="Warm Up" KeyType="0" Entries="1">
+        <TRACK Key="2"/>
+      </NODE>
+    </NODE>
+  </PLAYLISTS>
+  <HISTORIES>
+    <HISTORY Date="2025-01-20" Name="2025/01/20">
+      <TRACK Key="1"/>
+      <TRACK Key="2"/>
+      <TRACK Key="3"/>
+    </HISTORY>
+    <HISTORY Date="2025-02-15" Name="2025/02/15">
+      <TRACK Key="2"/>
+      <TRACK Key="1"/>
+    </HISTORY>
+  </HISTORIES>
+</DJ_PLAYLISTS>

@@ -1,0 +1,156 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust-windows:
+    name: Rust (Windows Build + Test)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build workspace
+        run: cargo build --workspace --target x86_64-pc-windows-msvc
+
+      - name: Run tests
+        run: cargo test --workspace --target x86_64-pc-windows-msvc
+
+      - name: Clippy
+        run: cargo clippy --workspace --target x86_64-pc-windows-msvc -- -D warnings
+
+  python-windows:
+    name: Python (Windows Test + Sidecar Build)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: packages/analysis
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: packages/analysis/pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: |
+          ruff check .
+          black --check .
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+      - name: Build sidecar executable
+        run: |
+          pip install pyinstaller
+          pyinstaller ai-dj-analysis.spec --clean --noconfirm
+
+      - name: Verify sidecar output
+        run: |
+          if (Test-Path "dist/ai-dj-analysis.exe") {
+            Write-Host "Sidecar built successfully"
+          } else {
+            Write-Host "Sidecar build failed"
+            exit 1
+          }
+        shell: pwsh
+
+      - name: Upload sidecar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidecar-windows
+          path: packages/analysis/dist/ai-dj-analysis.exe
+
+  typescript-windows:
+    name: TypeScript (Windows Test)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+        working-directory: .
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm run test
+
+  tauri-windows-build:
+    name: Tauri (Windows Installer)
+    needs: [rust-windows, python-windows, typescript-windows]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Download sidecar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sidecar-windows
+          path: apps/desktop/src-tauri/sidecars/
+
+      - name: Rename sidecar for Tauri
+        run: |
+          Copy-Item `
+            "apps/desktop/src-tauri/sidecars/ai-dj-analysis.exe" `
+            "apps/desktop/src-tauri/sidecars/ai-dj-analysis-x86_64-pc-windows-msvc.exe"
+        shell: pwsh
+
+      - name: Install Tauri CLI
+        run: npm install -g @tauri-apps/cli@next
+
+      - name: Build Tauri app
+        run: npx tauri build --target x86_64-pc-windows-msvc
+        working-directory: apps/desktop
+
+      - name: Upload MSI installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-dj-assist-windows-msi
+          path: apps/desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
+
+      - name: Upload NSIS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-dj-assist-windows-nsis
+          path: apps/desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe

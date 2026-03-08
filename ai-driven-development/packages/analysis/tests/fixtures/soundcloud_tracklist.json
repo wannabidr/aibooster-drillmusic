@@ -1,0 +1,38 @@
+{
+  "title": "Weekend Mix Vol. 3",
+  "user": {"username": "djbeta", "full_name": "DJ Beta"},
+  "genre": "Electronic",
+  "tag_list": "techno house minimal",
+  "created_at": "2025-02-20T18:30:00Z",
+  "duration": 5400000,
+  "permalink_url": "https://soundcloud.com/djbeta/weekend-mix-vol-3",
+  "tracks": [
+    {
+      "title": "Opening Anthem",
+      "user": {"username": "producer_a", "full_name": "Producer A"},
+      "genre": "Techno",
+      "bpm": 130.0,
+      "key_signature": "Cm",
+      "duration": 300000,
+      "start_time": 0
+    },
+    {
+      "title": "Mid Set Groove",
+      "user": {"username": "producer_b", "full_name": "Producer B"},
+      "genre": "Deep House",
+      "bpm": 124.0,
+      "key_signature": "Am",
+      "duration": 420000,
+      "start_time": 300000
+    },
+    {
+      "title": "Closing Banger",
+      "user": {"username": "producer_c", "full_name": "Producer C"},
+      "genre": "Minimal",
+      "bpm": 128.5,
+      "key_signature": "",
+      "duration": 360000,
+      "start_time": 720000
+    }
+  ]
+}

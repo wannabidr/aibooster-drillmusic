@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "track.schema.json",
+  "title": "Track",
+  "description": "A music track in the DJ's library",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "title": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "album": {
+      "type": "string"
+    },
+    "filePath": {
+      "type": "string"
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "bpm": {
+      "type": "number",
+      "minimum": 60,
+      "maximum": 200
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[1-9]|1[0-2][AB]$"
+    },
+    "energy": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "genre": {
+      "type": "string"
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "analyzedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["id", "title", "artist", "filePath"]
+}
