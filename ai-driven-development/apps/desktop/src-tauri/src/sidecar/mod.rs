@@ -43,15 +43,16 @@ impl SidecarManager {
         }
     }
 
-    /// Start the Python sidecar process.
-    pub fn start(&self, python_path: &str) -> Result<(), String> {
-        let child = Command::new(python_path)
-            .args(["-m", "src.interface.server"])
+    /// Start the sidecar process (PyInstaller binary or Python script).
+    pub fn start(&self, binary_path: &str) -> Result<(), String> {
+        eprintln!("[sidecar] Starting sidecar from: {}", binary_path);
+        let child = Command::new(binary_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
             .map_err(|e| format!("Failed to start sidecar: {}", e))?;
+        eprintln!("[sidecar] Sidecar started successfully (pid: {})", child.id());
 
         let mut proc = self.process.lock().map_err(|e| e.to_string())?;
         *proc = Some(child);

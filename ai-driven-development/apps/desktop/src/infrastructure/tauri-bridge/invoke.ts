@@ -26,9 +26,18 @@ function getInvoke(): InvokeFn | null {
 async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   const tauriInvoke = getInvoke();
   if (!tauriInvoke) {
+    console.error(`[tauri-bridge] Tauri not available. Cannot invoke: ${cmd}`);
     throw new Error(`Tauri not available. Cannot invoke: ${cmd}`);
   }
-  return tauriInvoke(cmd, args) as Promise<T>;
+  console.log(`[tauri-bridge] invoke: ${cmd}`, args);
+  try {
+    const result = await tauriInvoke(cmd, args) as T;
+    console.log(`[tauri-bridge] invoke success: ${cmd}`, result);
+    return result;
+  } catch (err) {
+    console.error(`[tauri-bridge] invoke error: ${cmd}`, err);
+    throw err;
+  }
 }
 
 export async function importLibrary(

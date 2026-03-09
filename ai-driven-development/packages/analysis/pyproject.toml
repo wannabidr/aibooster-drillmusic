@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ai-dj-analysis"
 version = "0.1.0"
 description = "Audio analysis engine for AI DJ Assist"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.13"
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.12",
@@ -14,7 +14,7 @@ dependencies = [
 
 [project.optional-dependencies]
 audio = [
-    "essentia>=2.1b6",
+    "essentia>=2.1b6.dev1389",
     "librosa>=0.10",
     "pyacoustid>=1.3",
 ]

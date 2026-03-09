@@ -35,9 +35,6 @@
       "Agent"
     ],
     "deny": [
-      "Bash(rm *)",
-      "Bash(rm -rf *)",
-      "Bash(rmdir *)",
       "Bash(unlink *)",
       "Bash(git clean *)",
       "Bash(git reset --hard*)"

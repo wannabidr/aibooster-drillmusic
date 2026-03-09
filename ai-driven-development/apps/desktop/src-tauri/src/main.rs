@@ -115,6 +115,7 @@ fn main() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(sidecar)
         .setup(|app| {
             let sidecar_state = app.state::<SidecarManager>();
@@ -126,13 +127,24 @@ fn main() {
                 "sidecars/ai-dj-analysis"
             };
 
+            // Try resource_dir first (production), then fall back to src-tauri/ (dev)
             let resource_path = app
                 .path()
                 .resource_dir()
                 .map(|p| p.join(sidecar_name))
-                .ok();
+                .ok()
+                .filter(|p| p.exists());
 
-            if let Some(path) = resource_path {
+            let dev_path = std::env::current_dir()
+                .map(|p| p.join(sidecar_name))
+                .ok()
+                .filter(|p| p.exists());
+
+            let sidecar_path = resource_path.or(dev_path);
+
+            eprintln!("[main] Resolved sidecar path: {:?}", sidecar_path);
+
+            if let Some(path) = sidecar_path {
                 if let Some(path_str) = path.to_str() {
                     if let Err(e) = sidecar_state.start(path_str) {
                         eprintln!("Warning: Failed to start sidecar: {}", e);
@@ -140,7 +152,8 @@ fn main() {
                     }
                 }
             } else {
-                eprintln!("Warning: Could not resolve sidecar path.");
+                eprintln!("Warning: Could not find sidecar binary at '{}'.", sidecar_name);
+                eprintln!("The app will run without analysis capabilities.");
             }
 
             Ok(())

@@ -10,7 +10,6 @@
     "beforeBuildCommand": "npm run build"
   },
   "app": {
-    "title": "AI DJ Assist",
     "windows": [
       {
         "title": "AI DJ Assist",

@@ -25,8 +25,8 @@
 시작하기 전에 아래 도구들이 설치되어 있어야 합니다:
 
 - **Node.js 20+** - [nodejs.org](https://nodejs.org)에서 다운로드
-- **Python 3.11+** - [python.org](https://www.python.org)에서 다운로드
-- **Rust (stable)** - 터미널에서 `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh` 실행
+- **Python 3.11 ~ 3.12** - [python.org](https://www.python.org)에서 다운로드 (3.13은 essentia 미지원)
+- **Rust (stable)** - 터미널에서 `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh` 실행 후 `source $HOME/.cargo/env`
 - **PostgreSQL** - 백엔드 사용 시에만 필요
 
 ### 설치 및 실행
@@ -46,20 +46,29 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -e ".[dev,audio,ml]"
 cd ../..
 
-# 4. Rust DSP 빌드
+# 4. Rust DSP 빌드 (Rust 설치 필수)
 cd packages/dsp
-rustup run stable cargo build
+cargo build                        # 또는 rustup run stable cargo build
 cd ../..
 
 # 5. 환경 변수 설정
 cp .env.example .env
 # .env 파일을 열어서 필요한 값을 입력하세요
 
-# 6. 데스크톱 앱 실행
-npm run dev
+# 6. 프론트엔드만 실행 (Rust 없이도 가능)
+npm run dev                        # Vite 개발 서버 → http://localhost:1420
+
+# 6-1. Tauri 데스크톱 앱 실행 (Rust 필요)
+cd apps/desktop
+npx tauri dev
 ```
 
-앱이 실행되면 Tauri 윈도우가 열리며 로컬 DJ 라이브러리를 불러올 수 있습니다.
+> **참고**: `npm run dev`는 브라우저에서 프론트엔드만 확인하는 용도입니다.
+> Tauri 네이티브 윈도우로 실행하려면 Rust가 설치된 상태에서 `npx tauri dev`를 사용하세요.
+
+> **Python 3.13 사용 시**: `essentia` 패키지가 아직 Python 3.13을 지원하지 않습니다.
+> 오디오 분석 기능이 필요하면 Python 3.11 또는 3.12를 사용하세요.
+> 테스트만 실행하려면 `pip install -e ".[dev]"`로 설치하면 됩니다.
 
 ---
 
@@ -115,6 +124,91 @@ Presentation -> Application -> Domain <- Infrastructure
 
 ---
 
+## 분석 CLI (독립 실행)
+
+Tauri 앱 없이 Python 분석 엔진만 단독으로 테스트할 수 있는 CLI 도구입니다.
+음악 디렉토리를 지정하면 BPM, 키(Camelot), 에너지를 분석하고, 곡을 선택하면 다음 곡을 추천합니다.
+
+### 설치
+
+```bash
+cd packages/analysis
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+pip install librosa          # 또는 essentia (더 정확하지만 설치 까다로움)
+```
+
+### 실행
+
+```bash
+cd packages/analysis
+source .venv/bin/activate
+
+# 전체 라이브러리 분석
+python cli.py /path/to/music
+
+# 처음 N곡만 분석 (빠른 테스트)
+python cli.py /path/to/music -n 20
+```
+
+### CLI 명령어
+
+| 명령 | 단축키 | 설명 |
+|------|--------|------|
+| `list` | `l` | 분석된 트랙 목록 표시 |
+| `select <번호>` | `s <번호>` | 현재 재생 곡 선택 |
+| `recommend` | `r` | 선택한 곡 기준 다음 곡 추천 (Top 10) |
+| `detail <번호>` | `d <번호>` | 곡 상세 분석 (구간별 에너지 차트 포함) |
+| `rescan` | - | 디렉토리 재스캔 및 분석 |
+| `help` | `h` | 명령어 도움말 |
+| `quit` | `q` | 종료 |
+
+### 사용 예시
+
+```
+$ python cli.py /Volumes/Music/basshouse -n 10
+
+============================================================
+  AI DJ Assist - Analysis & Recommendation CLI
+============================================================
+
+[1/3] Loading analyzer...
+  [OK] Librosa fallback loaded
+[2/3] Analyzer ready
+[3/3] Scanning: /Volumes/Music/basshouse
+  Found 1121 audio files (analyzing first 10)
+
+  Analyzing [1/10] Track A... OK  BPM=129.2 Key=9A Energy=91.1
+  Analyzing [2/10] Track B... OK  BPM=143.6 Key=2A Energy=91.0
+  ...
+
+  [no track] > select 1
+  ▶ Now playing: Track A  (BPM=129.2  Key=9A  Energy=91.1)
+
+  [Track A] > recommend
+
+  Now Playing: Track A
+  BPM: 129.2  Key: 9A  Energy: 91.1
+
+    #  Score  Title                                BPM     Key Energy  BPM% Key% NRG%
+  ───  ─────  ─────────────────────────────────  ──────  ─────── ──────  ──── ──── ────
+    1    95%  Track C                              129.2      9A   85.4  100% 100%  80%
+    2    93%  Track D                              123.0      9A   88.4   80% 100% 100%
+    3    76%  Track E                              129.2      5A   87.0  100%  40% 100%
+  ...
+```
+
+### 추천 알고리즘
+
+| 요소 | 가중치 | 설명 |
+|------|--------|------|
+| **Key (Camelot)** | 40% | 같은 키 100%, 인접 키 85%, 상대 조성 90% |
+| **BPM** | 35% | 동일 BPM 100%, 더블/하프타임 고려 |
+| **Energy** | 25% | 에너지 차이 ±5 이내 100%, 부드러운 전환 우선 |
+
+---
+
 ## 테스트
 
 ```bash
@@ -134,7 +228,7 @@ cd packages/dsp && rustup run stable cargo test
 npm run check:arch
 ```
 
-전체 프로젝트에 걸쳐 550개 이상의 테스트가 작성되어 있습니다.
+전체 프로젝트에 걸쳐 823개 이상의 테스트가 작성되어 있습니다 (Desktop 325 + Analysis 352 + Backend 146).
 
 ---
 

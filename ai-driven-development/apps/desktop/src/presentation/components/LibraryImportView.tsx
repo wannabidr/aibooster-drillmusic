@@ -84,7 +84,10 @@ function ImportButton({
         cursor: disabled ? "not-allowed" : "pointer",
       }}
       disabled={disabled}
-      onClick={() => onClick(source)}
+      onClick={() => {
+        console.log(`[LibraryImportView] Button clicked: ${source}`);
+        onClick(source);
+      }}
     >
       {label}
     </button>
