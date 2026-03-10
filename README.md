@@ -78,5 +78,6 @@ DrillMusic은 AI, App, Cloud 세 분야의 개발자가 협업하여 **AI DJ 시
 * 정보처리기사
 * SQLD (SQL 개발자)
 
+![Alt](https://repobeats.axiom.co/api/embed/253b8538879696ea896d418272904514265d75c4.svg "Repobeats analytics image")
 ---
 *Created as part of the PNU AI Booster Program (2025.12 ~)*
