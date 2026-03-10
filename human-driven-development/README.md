@@ -1,11 +1,3 @@
-# PNU AI Booster - DrillMusic (AI DJ Project)
-
-## 프로젝트 소개
-
-DrillMusic은 **AI DJ 시스템**을 구현하는 프로젝트입니다. PNU AI Booster 프로그램의 일환으로, AI Tool을 활용한 AI Native 개발 방식을 통해 전문 DJ의 워크플로우를 혁신하는 것을 목표로 합니다.
-
-PNU AI Booster는 AI Tool을 적극 활용하여 프로젝트를 개발하면서 AI Native 개발자를 양성하는 교육 프로그램입니다. DrillMusic은 이러한 철학을 바탕으로 AI, App, Cloud 세 분야의 개발자가 협업하여 실용적인 AI DJ 솔루션을 구현합니다.
-
 ## 팀 구성
 
 **Team AISFA**

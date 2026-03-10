@@ -394,10 +394,12 @@ def main():
     parser = argparse.ArgumentParser(description="AI DJ Assist - Analysis & Recommendation CLI")
     parser.add_argument("directory", help="Path to music directory")
     parser.add_argument("-n", "--limit", type=int, default=0, help="Max number of tracks to analyze (0 = all)")
+    parser.add_argument("--random", action="store_true", help="Randomly select tracks (use with -n)")
     args = parser.parse_args()
 
     music_dir = os.path.expanduser(args.directory)
     max_tracks = args.limit
+    use_random = args.random
     if not os.path.isdir(music_dir):
         print(f"Error: '{music_dir}' is not a directory")
         sys.exit(1)
@@ -422,7 +424,11 @@ def main():
         files = scan_directory(music_dir)
         total_found = len(files)
         if max_tracks > 0:
-            files = files[:max_tracks]
+            if use_random:
+                import random
+                files = random.sample(files, min(max_tracks, len(files)))
+            else:
+                files = files[:max_tracks]
         print(f"  Found {total_found} audio files" + (f" (analyzing first {len(files)})" if max_tracks > 0 else ""))
         if not files:
             print("  No supported audio files found.")

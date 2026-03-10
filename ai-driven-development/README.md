@@ -55,10 +55,10 @@ cd ../..
 cp .env.example .env
 # .env 파일을 열어서 필요한 값을 입력하세요
 
-# 6. 프론트엔드만 실행 (Rust 없이도 가능)
+# 6. 프론트엔드만 실행 (Rust 없이도 가능) (현재 분석 도구와 연동에 오류 있음. 하기 작성된 CLI 도구로 테스트할 것)
 npm run dev                        # Vite 개발 서버 → http://localhost:1420
 
-# 6-1. Tauri 데스크톱 앱 실행 (Rust 필요)
+# 6-1. Tauri 데스크톱 앱 실행 (Rust 필요) (현재 분석 도구와 연동에 오류 있음. 하기 작성된 CLI 도구로 테스트할 것)
 cd apps/desktop
 npx tauri dev
 ```
@@ -124,7 +124,7 @@ Presentation -> Application -> Domain <- Infrastructure
 
 ---
 
-## 분석 CLI (독립 실행)
+## 분석 CLI (독립 실행, 현재 동작 중)
 
 Tauri 앱 없이 Python 분석 엔진만 단독으로 테스트할 수 있는 CLI 도구입니다.
 음악 디렉토리를 지정하면 BPM, 키(Camelot), 에너지를 분석하고, 곡을 선택하면 다음 곡을 추천합니다.
