@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Booster 최종발표 — Team AISFA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a25;
+    --accent: #6c5ce7;
+    --accent2: #00cec9;
+    --warn: #fd79a8;
+    --text: #e8e8f0;
+    --muted: #8888a0;
+    --glow: rgba(108, 92, 231, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .deck {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    text-align: center;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* Slide counter */
+  .counter {
+    position: fixed;
+    bottom: 24px; right: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    z-index: 100;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: var(--text);
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  p, li {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+    color: var(--muted);
+    font-weight: 300;
+    margin-top: 8px;
+  }
+
+  .highlight {
+    color: var(--accent2);
+    font-weight: 700;
+  }
+
+  .warn {
+    color: var(--warn);
+    font-weight: 700;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 4px;
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(108, 92, 231, 0.3);
+  }
+
+  .tag.green {
+    background: rgba(0, 206, 201, 0.12);
+    color: var(--accent2);
+    border-color: rgba(0, 206, 201, 0.3);
+  }
+
+  .tag.pink {
+    background: rgba(253, 121, 168, 0.12);
+    color: var(--warn);
+    border-color: rgba(253, 121, 168, 0.3);
+  }
+
+  /* Cards / Boxes */
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: left;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .card h3 {
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card li {
+    font-size: 1.05rem;
+    padding: 4px 0;
+    color: var(--muted);
+  }
+
+  .card li::before {
+    content: '>';
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    margin-right: 10px;
+  }
+
+  /* Two-column layout */
+  .cols {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+    align-items: stretch;
+  }
+
+  .cols > * {
+    flex: 1;
+  }
+
+  /* VS layout */
+  .vs-container {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .vs-badge {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--warn);
+    flex-shrink: 0;
+    text-shadow: 0 0 30px rgba(253, 121, 168, 0.5);
+  }
+
+  /* Big number */
+  .big-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .compare-table th, .compare-table td {
+    padding: 16px 24px;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .compare-table th {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .compare-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .compare-table .human-val {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .compare-table .ai-val {
+    color: var(--accent2);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .compare-table .row-label {
+    text-align: left;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Quote block */
+  .quote {
+    border-left: 3px solid var(--accent);
+    padding: 20px 28px;
+    background: rgba(108, 92, 231, 0.06);
+    border-radius: 0 12px 12px 0;
+    max-width: 800px;
+    text-align: left;
+    margin-top: 24px;
+  }
+
+  .quote p {
+    font-size: 1.3rem;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-item {
+    background: var(--card);
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Bullet list (non-card) */
+  .bullet-list {
+    list-style: none;
+    text-align: left;
+    max-width: 800px;
+    padding: 0;
+  }
+
+  .bullet-list li {
+    padding: 10px 0;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Key message styling */
+  .key-msg {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 32px;
+    padding: 20px 40px;
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    background: rgba(108, 92, 231, 0.08);
+    max-width: 800px;
+  }
+
+  /* Team info */
+  .team-info {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-top: 28px;
+    letter-spacing: 0.5px;
+  }
+
+  .team-info span {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Diagram: Two Track */
+  .track-diagram {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+
+  .track-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px 32px;
+    width: 380px;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+
+  .track-box.human {
+    border-top: 3px solid var(--accent);
+  }
+
+  .track-box.ai {
+    border-top: 3px solid var(--accent2);
+  }
+
+  .track-box h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .track-box.human h3 { color: var(--accent); }
+  .track-box.ai h3 { color: var(--accent2); }
+
+  .track-box .desc {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .track-box .tool {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .track-box .cost {
+    font-size: 0.9rem;
+    color: var(--warn);
+    margin-top: 10px;
+  }
+
+  .track-goal {
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .track-goal p {
+    font-size: 1rem;
+    color: var(--muted);
+  }
+
+  /* Animation for key slide */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(108, 92, 231, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(108, 92, 231, 0.5); }
+  }
+
+  .glow-box {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  /* Closing */
+  .closing-msg {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Nav hint */
+  .nav-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.2);
+    font-family: 'JetBrains Mono', monospace;
+    z-index: 100;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 32px; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.7rem; }
+    .cols { flex-direction: column; gap: 20px; }
+    .track-diagram { flex-direction: column; gap: 20px; }
+    .track-box { width: 100%; }
+    .vs-container { flex-direction: column; }
+    .big-num { font-size: 3rem; }
+    .key-msg { font-size: 1.3rem; padding: 16px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="nav-hint">Arrow Keys / Space / Click</div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: 표지 -->
+  <div class="slide active" data-index="0">
+    <h3 style="font-size:1rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:24px;">AI Booster 2025 Final</h3>
+    <h1>AI Booster 최종발표</h1>
+    <p class="subtitle" style="font-size:1.6rem; margin-bottom:8px;">Team AISFA / DrillMusic</p>
+    <p class="subtitle" style="margin-top:24px;">개발자들아. 정신 똑바로 차립시다.</p>
+    <div class="team-info" style="margin-top:40px;">
+      <span>팀장</span> 김성욱 &nbsp;&middot;&nbsp; <span>팀원</span> 문경환 &middot; 전진혁
+    </div>
+  </div>
+
+  <!-- Slide 2: 지난 발표 요약 -->
+  <div class="slide" data-index="1">
+    <h2>지난 발표 요약</h2>
+    <div class="card" style="max-width:800px; margin-bottom:24px;">
+      <h3>2024.07 기준 바이브코딩의 한계</h3>
+      <ul>
+        <li>IDE 보조 수준 &mdash; 전반적 기능 위임은 위험</li>
+        <li>좋은 변수명, 문서화, 건전한 타입, 높은 응집도</li>
+        <li>작은 context에서 다룰 수 있는 작은 단위의 코드</li>
+        <li><span class="warn">인간이 주도해서 써야 한다</span>는 것이 결론</li>
+      </ul>
+    </div>
+    <div class="quote">
+      <p>"데이터가 없는 도메인에서는 AI를 쓰기 어려웠다.<br>그래서 이번에 이 영역에 도전하기로 했다."</p>
+    </div>
+  </div>
+
+  <!-- Slide 3: 실험 설계 -->
+  <div class="slide" data-index="2">
+    <h2>실험 설계: 투 트랙 비교</h2>
+    <div class="track-diagram">
+      <div class="track-box human">
+        <h3>Human Driven</h3>
+        <p class="desc">AI를 사용하지만 <strong>인간 주도</strong></p>
+        <span class="tool">Cursor AI</span>
+        <p class="cost">$20 / person</p>
+      </div>
+      <div class="track-box ai">
+        <h3>AI Driven</h3>
+        <p class="desc"><strong>완전 AI 주도</strong></p>
+        <span class="tool">Claude Code</span>
+        <p class="cost">$100 / person</p>
+      </div>
+    </div>
+    <div class="track-goal">
+      <p style="margin-top:24px; font-size:1.1rem;">
+        <span class="highlight">같은 목표</span> &mdash; AI DJ 추천 시스템을 두 방식으로 병행 개발
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 4: Human Driven 결과 -->
+  <div class="slide" data-index="3">
+    <h2>Human Driven 결과</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>기술 스택</h3>
+        <ul>
+          <li>Electron + React</li>
+          <li>CLAP 임베딩</li>
+          <li>FAISS 벡터 검색</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>추천 알고리즘</h3>
+        <ul>
+          <li>BPM / Key / 에너지 매칭</li>
+          <li>음질감(Timbre) 매칭</li>
+          <li>다양성 관리</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:28px; display:flex; gap:16px; align-items:center;">
+      <span class="tag pink">개발 기간: ~1.5개월</span>
+      <span class="tag">AI 전문가 + 도메인 전문가 협업</span>
+      <span class="tag">3명</span>
+    </div>
+  </div>
+
+  <!-- Slide 5: AI Driven 결과 -->
+  <div class="slide" data-index="4">
+    <h2>AI Driven 결과</h2>
+    <div class="cols">
+      <div class="card" style="border-top: 2px solid var(--accent2);">
+        <h3>기술 스택</h3>
+        <ul>
+          <li>Tauri v2 + React</li>
+          <li>Rust DSP</li>
+          <li>PyTorch / ONNX</li>
+          <li>FastAPI</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top: 2px solid var(--accent2);">
+        <h3>주요 성과</h3>
+        <ul>
+          <li>Clean Architecture 4계층</li>
+          <li>823+ 테스트 통과</li>
+          <li>ML 추천 / 장르 분류 / 오디오 블렌드</li>
+          <li>MIDI 컨트롤 / 스트리밍 연동</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:28px; display:flex; gap:16px; align-items:center;">
+      <span class="tag green">서브에이전트 / 에이전트 팀 활용</span>
+      <span class="tag green">Claude Code</span>
+    </div>
+  </div>
+
+  <!-- Slide 6: 충격적 비교 -->
+  <div class="slide" data-index="5">
+    <h2>충격적 비교</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Human Driven</th>
+          <th>AI Driven</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">작업자</td>
+          <td class="human-val">3명</td>
+          <td class="ai-val">5~6 에이전트</td>
+        </tr>
+        <tr>
+          <td class="row-label">추천 알고리즘</td>
+          <td class="human-val">~1.5개월</td>
+          <td class="ai-val">~1.5시간</td>
+        </tr>
+        <tr>
+          <td class="row-label">전체 시스템</td>
+          <td class="human-val">&mdash;</td>
+          <td class="ai-val">2일 (실질 1일 미만)</td>
+        </tr>
+        <tr>
+          <td class="row-label">추천 품질</td>
+          <td class="human-val">양호</td>
+          <td class="ai-val" style="color:var(--warn);">더 만족스러움</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="key-msg glow-box" style="margin-top:36px;">
+      하하하. 그럼 우리 끝인가요?
+    </div>
+  </div>
+
+  <!-- Slide 7: 써봐야 합니다 -->
+  <div class="slide" data-index="6">
+    <h2>써봐야 합니다</h2>
+    <ul class="bullet-list">
+      <li>5개 에이전트가 <span class="highlight">동시에 소통하며 코드를 생성</span>하는 광경</li>
+      <li>기존 철학(인간 검토, 권한 제한)이 오히려 <span class="warn">AI 역량을 방해</span></li>
+      <li>만들어진 코드를 읽기가 힘듦 &mdash; 인간이 읽기에 최적화되어 있지 않음</li>
+    </ul>
+    <div class="quote" style="margin-top:32px;">
+      <p>"이해하려 하지 말고,<br>잘 명령하고 <span class="highlight">이해할 수 있는 내용을 요청하라.</span>"</p>
+    </div>
+  </div>
+
+  <!-- Slide 8: 준비해야 합니다 -->
+  <div class="slide" data-index="7">
+    <h2>준비해야 합니다 &mdash; AI Native란?</h2>
+    <div class="flow" style="margin:28px 0;">
+      <div class="flow-item">어떤 작업이 가능한지<br><strong>인지</strong></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-item">필요한 서비스를<br><strong>선택</strong></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-item">스킬 / 플러그인으로<br><strong>세팅 최적화</strong></div>
+    </div>
+    <div class="key-msg" style="margin-top:24px;">
+      사람은 <span class="highlight">코드</span>가 아닌 <span class="highlight">워크플로우</span>를 생산한다.
+    </div>
+    <p style="margin-top:20px; color:var(--muted); font-size:1rem;">
+      업무에 자주 사용하는 플러그인, 스킬을 준비해놓아야<br>"나는 AI를 잘 써요"라고 할 수 있다.
+    </p>
+  </div>
+
+  <!-- Slide 9: 크게 봐야 합니다 -->
+  <div class="slide" data-index="8">
+    <h2>크게 봐야 합니다</h2>
+    <div class="card" style="max-width:800px; margin-bottom:24px; border-left:3px solid var(--warn);">
+      <h3 style="color:var(--warn);">실제 사례: 멀티 스택 통합 실패</h3>
+      <ul>
+        <li>데스크탑 앱 프론트: React</li>
+        <li>앱 엔진: Rust</li>
+        <li>AI 로직: Python</li>
+        <li style="color:var(--warn);">결국 구동이 잘 안 됨</li>
+      </ul>
+    </div>
+    <p style="font-size:1.15rem; color:var(--muted); margin-bottom:20px;">
+      부분 로직은 잘 쓰지만, <span class="warn">큰 그림에서 헤맨다.</span><br>
+      언젠가 이조차 해결되겠지만 &mdash;
+    </p>
+    <div class="key-msg">
+      작은 그림을 보는 사람은 사라졌다.<br>
+      <span class="highlight">큰 시스템을 설계할 줄 알아야 한다.</span>
+    </div>
+  </div>
+
+  <!-- Slide 10: 마무리 -->
+  <div class="slide" data-index="9">
+    <h3 style="letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:16px;">Software 3.0</h3>
+    <h2 style="margin-bottom:16px;">약 6개월 동안 세상이 바뀌었습니다.</h2>
+    <p style="font-size:1.15rem; color:var(--muted); margin-bottom:32px;">
+      무어의 법칙은 이제 CPU, 메모리를 넘어 <span class="highlight">AI</span>로 왔습니다.<br>
+      소프트웨어 3.0 &mdash; <strong>Harness</strong>라는 용어로<br>
+      우리가 갖춰야 할 능력을 정의하고 있습니다.
+    </p>
+    <div class="closing-msg" style="font-size:2.4rem; margin-bottom:40px;">
+      사고의 틀을 바꾸고 앞서가십시오.
+    </div>
+    <p style="font-size:1.6rem; font-weight:500;">감사합니다.</p>
+    <div class="team-info" style="margin-top:32px;">
+      Team AISFA &nbsp;&middot;&nbsp; <span>김성욱</span> &middot; 문경환 &middot; 전진혁
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  let current = 0;
+  const total = slides.length;
+
+  function update() {
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+      else if (i < current) s.classList.add('prev');
+    });
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function next() { if (current < total - 1) { current++; update(); } }
+  function prev() { if (current > 0) { current--; update(); } }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { current = 0; update(); }
+    if (e.key === 'End') { current = total - 1; update(); }
+  });
+
+  document.addEventListener('click', e => {
+    if (e.clientX > window.innerWidth / 2) next(); else prev();
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx < -50) next();
+    if (dx > 50) prev();
+  });
+
+  update();
+</script>
+
+</body>
+</html>
